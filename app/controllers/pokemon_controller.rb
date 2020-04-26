@@ -5,6 +5,9 @@ class PokemonController < ApplicationController
   SHAKESPEARE_URL = 'https://api.funtranslations.com/translate/shakespeare.json?'
 
   def show
+    unless POKEMON_SPECIES.include?(params[:pokemon])
+      raise InvalidParameterError
+    end
     description = pokeapi_request
     description = shakespeare_request(description)
     render json: api_response(description), status: 200

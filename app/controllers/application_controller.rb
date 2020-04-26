@@ -7,9 +7,14 @@ class ApplicationController < ActionController::API
     basic_error_response(error)
   end
 
+  rescue_from InvalidParameterError do |error|
+    log_error(error)
+    render json: { error: "Parameter '#{params[:pokemon]}' is not a valid Pokémon" }, status: 422
+  end
+
   rescue_from RestClient::TooManyRequests do |error|
     log_error(error)
-    render json: { error: 'Too many free requests to an external API' }, status: 502
+    render json: { error: 'Too many requests to an external API' }, status: 502
   end
 
   def route_not_found
@@ -20,7 +25,7 @@ class ApplicationController < ActionController::API
 
   def basic_error_response(error)
     log_error(error)
-    render json: { error: 'Something went wrong' }, status: 500
+    return render json: { error: 'Something went wrong' }, status: 500
   end
 
   def log_error(error)
