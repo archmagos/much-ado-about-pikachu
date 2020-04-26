@@ -2,7 +2,7 @@
 
 class PokemonController < ApplicationController
   POKEAPI_URL = 'https://pokeapi.co/api/v2/pokemon-species/'
-  SHAKESPEARE_URL = 'https://api.funtranslations.com/translate/shakespeare.json'
+  SHAKESPEARE_URL = 'https://api.funtranslations.com/translate/shakespeare.json?'
 
   def show
     description = pokeapi_request
@@ -20,8 +20,10 @@ class PokemonController < ApplicationController
   end
 
   def shakespeare_request(description)
-    result = RestClient.get(SHAKESPEARE_URL, text: description)
-    JSON.parse(result).dig('contents', 'translated')
+    description = description.gsub(/\n/, ' ')
+    description = { text: description }.to_query
+    description = RestClient.get(SHAKESPEARE_URL + description)
+    JSON.parse(description).dig('contents', 'translated')
   end
 
   def api_response(description)

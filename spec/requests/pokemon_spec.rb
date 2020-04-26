@@ -6,6 +6,7 @@ RSpec.describe 'Pokemon', type: 'request' do
   describe '#show' do
     let(:pokemon) { 'octillery' }
     let(:pokeapi_description) { 'Pokémon description' }
+    let(:description_query) { 'text=Pok%C3%A9mon+description' }
     let(:shakespeare_description) { 'Shakespeare description' }
 
     before do
@@ -15,7 +16,7 @@ RSpec.describe 'Pokemon', type: 'request' do
         .and_return(pokeapi_response)
 
       expect(RestClient).to receive(:get)
-        .with(PokemonController::SHAKESPEARE_URL, text: pokeapi_description)
+        .with(PokemonController::SHAKESPEARE_URL + description_query)
         .ordered
         .and_return(shakespeare_api_response)
     end
