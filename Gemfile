@@ -7,6 +7,7 @@ gem 'rails', '~> 6.0.2', '>= 6.0.2.2'
 gem 'jbuilder', '~> 2.7'
 gem 'pry'
 gem 'puma', '~> 4.1'
+gem 'rest-client'
 gem 'rspec-rails', '~> 4.0.0'
 
 group :development do

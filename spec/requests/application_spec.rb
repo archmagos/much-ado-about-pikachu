@@ -8,8 +8,9 @@ RSpec.describe 'Application', type: 'request' do
       context 'with an invalid route' do
         it 'returns an error response and 404 status code' do
           get '/incorrect-route'
-          expect(response.code).to eq('404')
-          expect(response.body).to eq('Route not found')
+          expect(response).to have_http_status(404)
+          body = JSON.parse(response.body)
+          expect(body['error']).to eq('Route not found')
         end
       end
     end
