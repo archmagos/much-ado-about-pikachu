@@ -5,28 +5,32 @@ class PokemonController < ApplicationController
   SHAKESPEARE_URL = 'https://api.funtranslations.com/translate/shakespeare.json?'
 
   def show
-    unless POKEMON_SPECIES.include?(params[:pokemon])
-      raise InvalidParameterError
-    end
-    description = pokeapi_request
-    description = shakespeare_request(description)
-    render json: api_response(description), status: 200
+    validate_params
+    pokeapi_description = pokeapi_request
+    shakespeare_description = shakespeare_request(pokeapi_description)
+    render json: api_response(shakespeare_description), status: 200
   end
 
   private
 
+  def validate_params
+    unless POKEMON_SPECIES.include?(params[:pokemon])
+      raise InvalidParameterError
+    end
+  end
+
   def pokeapi_request
-    result = RestClient.get(POKEAPI_URL + params[:pokemon])
-    result = JSON.parse(result).dig('flavor_text_entries')
-    result = result.select { |ft| ft.dig('language', 'name') == 'en' }
-    result.first.dig('flavor_text')
+    pokeapi_response = RestClient.get(POKEAPI_URL + params[:pokemon])
+    flavour_text_entries = JSON.parse(pokeapi_response).dig('flavor_text_entries')
+    flavour_text = flavour_text_entries.select { |ft| ft.dig('language', 'name') == 'en' }
+    flavour_text.first.dig('flavor_text')
   end
 
   def shakespeare_request(description)
-    description = description.gsub(/\n/, ' ')
-    description = { text: description }.to_query
-    description = RestClient.get(SHAKESPEARE_URL + description)
-    JSON.parse(description).dig('contents', 'translated')
+    formatted_description = description.gsub(/\n/, ' ')
+    description_query = { text: formatted_description }.to_query
+    shakespeare_response = RestClient.get(SHAKESPEARE_URL + description_query)
+    JSON.parse(shakespeare_response).dig('contents', 'translated')
   end
 
   def api_response(description)
