@@ -5,20 +5,27 @@ require 'rails_helper'
 RSpec.describe 'Pokemon', type: 'request' do
   describe '#show' do
     let(:pokemon) { 'octillery' }
-    let(:description) { 'Pokémon description' }
+    let(:pokeapi_description) { 'Pokémon description' }
+    let(:shakespeare_description) { 'Shakespeare description' }
 
     before do
       expect(RestClient).to receive(:get)
         .with(PokemonController::POKEAPI_URL + pokemon)
+        .ordered
         .and_return(pokeapi_response)
+
+      expect(RestClient).to receive(:get)
+        .with(PokemonController::SHAKESPEARE_URL, text: pokeapi_description)
+        .ordered
+        .and_return(shakespeare_api_response)
     end
 
-    context 'with a valid PokéAPI response' do
+    context 'with valid external API responses' do
       let(:pokeapi_response) do
         {
           "flavor_text_entries" => [
             {
-              "flavor_text" => description,
+              "flavor_text" => pokeapi_description,
               "language"=> {
                 "name" => "en"
               }
@@ -27,22 +34,20 @@ RSpec.describe 'Pokemon', type: 'request' do
         }.to_json
       end
 
+      let(:shakespeare_api_response) do
+        {
+          "contents" => {
+            "translated" => shakespeare_description
+          }
+        }.to_json
+      end
+
       it 'returns a Pokémon name and description' do
         get "/pokemon/#{pokemon}"
         expect(response).to have_http_status(200)
         body = JSON.parse(response.body)
         expect(body['name']).to eq(pokemon)
-        expect(body['description']).to eq(description)
-      end
-    end
-
-    context 'with an invalid PokéAPI response' do
-      context 'with a null response' do
-
-      end
-
-      context 'with an error response' do
-
+        expect(body['description']).to eq(shakespeare_description)
       end
     end
   end
