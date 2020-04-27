@@ -806,6 +806,4 @@ POKEMON_SPECIES = %w[
 	stakataka
 	blacephalon
 	zeraora
-	meltan
-	melmetal
 ]
