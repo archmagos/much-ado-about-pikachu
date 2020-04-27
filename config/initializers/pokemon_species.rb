@@ -1,7 +1,7 @@
 POKEMON_SPECIES = %w[
-  bulbasaur
-  ivysaur
-  venusaur
+	bulbasaur
+	ivysaur
+	venusaur
 	charmander
 	charmeleon
 	charizard
