@@ -10,19 +10,19 @@ RSpec.describe 'Pokemon', type: 'request' do
       let(:description_query) { 'text=Pok%C3%A9mon+description' }
       let(:shakespeare_description) { 'Shakespeare description' }
 
-      before do
-        expect(RestClient).to receive(:get)
-          .with(PokemonController::POKEAPI_URL + pokemon)
-          .ordered
-          .and_return(pokeapi_response)
-
-        expect(RestClient).to receive(:get)
-          .with(PokemonController::SHAKESPEARE_URL + description_query)
-          .ordered
-          .and_return(shakespeare_api_response)
-      end
-
       context 'with valid external API responses' do
+        before do
+          expect(RestClient).to receive(:get)
+            .with(PokemonController::POKEAPI_URL + pokemon)
+            .ordered
+            .and_return(pokeapi_response)
+
+          expect(RestClient).to receive(:get)
+            .with(PokemonController::SHAKESPEARE_URL + description_query)
+            .ordered
+            .and_return(shakespeare_api_response)
+        end
+
         let(:pokeapi_response) do
           {
             "flavor_text_entries" => [
