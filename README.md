@@ -21,7 +21,7 @@ Responses are returned as JSON in the format:
 For instance, the following request:
 
 ```http
-GET localhost:3000/pokemon/octillery
+GET /pokemon/octillery
 ```
 
 Should return:
@@ -48,10 +48,15 @@ Run the project locally on port `3000`:
 ```bash
 $ bundle exec rails server
 ```
-This project also contains a Dockerfile so that it can be run inside a container ([get Docker](https://docs.docker.com/get-docker/)). To get a server up and running, exposing port `3000`:
+Alternatively, this project contains a Dockerfile so that it can be run inside a container ([get Docker](https://docs.docker.com/get-docker/)). To get a server up and running:
 ```bash
 $ docker build . -t pikachu
 $ docker run -p 3000:3000 pikachu:latest
+```
+With a server running, requests can be made to `localhost` as follows:
+
+```http
+GET http://localhost:3000/pokemon/:pokemon
 ```
 
 ## Tests
