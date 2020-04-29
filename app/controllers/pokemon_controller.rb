@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class PokemonController < ApplicationController
+  include PokemonSpecies
+
   before_action :validate_params
 
   POKEAPI_URL = 'https://pokeapi.co/api/v2/pokemon-species/'
