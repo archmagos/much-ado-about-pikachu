@@ -6,42 +6,21 @@ RSpec.describe 'Pokemon', type: 'request' do
   describe '#show' do
     context 'with a valid Pokémon parameter' do
       let(:pokemon) { 'octillery' }
-      let(:pokeapi_description) { 'Pokémon description' }
-      let(:description_query) { 'text=Pok%C3%A9mon+description' }
-      let(:shakespeare_description) { 'Shakespeare description' }
 
-      context 'with valid external API responses' do
+      context 'with valid API responses' do
+        let(:pokemon_description) { 'Pokémon description' }
+        let(:shakespeare_description) { 'Shakespeare description' }
+
         before do
-          expect(RestClient).to receive(:get)
-            .with(PokemonController::POKEAPI_URL + pokemon)
-            .ordered
-            .and_return(pokeapi_response)
+          expect(PokeapiQueryService)
+            .to receive(:call)
+            .with(pokemon)
+            .and_return(pokemon_description)
 
-          expect(RestClient).to receive(:get)
-            .with(PokemonController::SHAKESPEARE_URL + description_query)
-            .ordered
-            .and_return(shakespeare_api_response)
-        end
-
-        let(:pokeapi_response) do
-          {
-            "flavor_text_entries" => [
-              {
-                "flavor_text" => pokeapi_description,
-                "language"=> {
-                  "name" => "en"
-                }
-              }
-            ]
-          }.to_json
-        end
-
-        let(:shakespeare_api_response) do
-          {
-            "contents" => {
-              "translated" => shakespeare_description
-            }
-          }.to_json
+          expect(ShakespeareQueryService)
+            .to receive(:call)
+            .with(pokemon_description)
+            .and_return(shakespeare_description)
         end
 
         it 'returns a Pokémon name and description' do

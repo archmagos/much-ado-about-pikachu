@@ -809,5 +809,5 @@ module PokemonSpecies
     stakataka
     blacephalon
     zeraora
-  ]
+  ].freeze
 end

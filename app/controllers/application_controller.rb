@@ -1,34 +1,37 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::API
-  rescue_from StandardError do |error|
-    basic_error_response(error)
-  end
+  rescue_from NoMethodError, with: :basic_error_response
+  rescue_from StandardError, with: :basic_error_response
 
-  rescue_from NoMethodError do |error|
-    basic_error_response(error)
-  end
-
-  rescue_from InvalidParameterError do |error|
-    log_error(error)
-    render json: { error: "Parameter '#{params[:pokemon]}' is not a valid Pokémon" }, status: 422
-  end
-
-  rescue_from RestClient::TooManyRequests do |error|
-    log_error(error)
-    render json: { error: 'Too many requests to an external API' }, status: 502
-  end
+  rescue_from InvalidParameterError, with: :invalid_parameter_response
+  rescue_from RestClient::TooManyRequests, with: :too_many_requests_response
 
   def route_not_found
-    render json: { error: 'Route not found' }, status: 404
+    render json: { error: 'Route not found' }, status: :not_found
   end
 
   private
 
-  def basic_error_response(error)
-    log_error(error)
-    return render json: { error: 'Something went wrong' }, status: 500
-  end
-
   def log_error(error)
     logger.error("Error: #{error.inspect}")
+  end
+
+  def basic_error_response(error)
+    log_error(error)
+    error_message = 'Something went wrong'
+    render json: { error: error_message }, status: :internal_server_error
+  end
+
+  def invalid_parameter_response(error)
+    log_error(error)
+    error_message = "Parameter '#{params[:pokemon]}' is not a valid Pokémon"
+    render json: { error: error_message }, status: :unprocessable_entity
+  end
+
+  def too_many_requests_response(error)
+    log_error(error)
+    error_message = 'Too many requests to an external API'
+    render json: { error: error_message }, status: :too_many_requests
   end
 end

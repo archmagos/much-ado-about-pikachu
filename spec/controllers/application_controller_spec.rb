@@ -20,7 +20,7 @@ RSpec.describe ApplicationController, type: :controller do
   describe 'error handling' do
     context 'StandardError' do
       it 'returns an error response and 500 status code' do
-        routes.draw { get "standard_error" => "anonymous#standard_error" }
+        routes.draw { get 'standard_error' => 'anonymous#standard_error' }
         get :standard_error
         expect(response).to have_http_status(500)
         body = JSON.parse(response.body)
@@ -30,7 +30,7 @@ RSpec.describe ApplicationController, type: :controller do
 
     context 'NoMethodError' do
       it 'returns an error response and 500 status code' do
-        routes.draw { get "no_method_error" => "anonymous#no_method_error" }
+        routes.draw { get 'no_method_error' => 'anonymous#no_method_error' }
         get :no_method_error
         expect(response).to have_http_status(500)
         body = JSON.parse(response.body)
@@ -39,10 +39,10 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     context 'RestClient::TooManyRequests' do
-      it 'returns an error response and 502 status code' do
-        routes.draw { get "too_many_requests" => "anonymous#too_many_requests" }
+      it 'returns an error response and 429 status code' do
+        routes.draw { get 'too_many_requests' => 'anonymous#too_many_requests' }
         get :too_many_requests
-        expect(response).to have_http_status(502)
+        expect(response).to have_http_status(429)
         body = JSON.parse(response.body)
         expect(body['error']).to eq('Too many requests to an external API')
       end
